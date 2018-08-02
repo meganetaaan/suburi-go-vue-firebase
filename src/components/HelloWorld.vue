@@ -19,8 +19,10 @@ const PRIVATE_API_URL = `${ROOT_URL}/private`
 export default {
   name: 'HelloWorld',
   data () {
+    const user = firebase.auth().currentUser
+    const name = user != null ? user.email : ''
     return {
-      name: firebase.auth().currentUser.email,
+      name,
       message: 'Welcome to Your Vue.js App'
     }
   },
@@ -30,7 +32,9 @@ export default {
       this.message = res.data
     },
     async callPrivate () {
-      const res = await axios.get(PRIVATE_API_URL)
+      const res = await axios.get(PRIVATE_API_URL, {
+        headers: {'Authorization': `Bearer ${localStorage.getItem('jwt')}`}
+      })
       this.message = res.data
     },
     async signout () {
