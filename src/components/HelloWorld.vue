@@ -1,14 +1,17 @@
 <template>
   <div class="hello">
+    <h1>Hello {{ name }}</h1>
     <h1>{{ message }}</h1>
     <h2>Essential Links</h2>
     <button @click="callPublic">public</button>
     <button @click="callPrivate">private</button>
+    <button @click="signout">Sign Out</button>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import firebase from 'firebase'
 
 const ROOT_URL = 'http://localhost:8000'
 const PUBLIC_API_URL = `${ROOT_URL}/public`
@@ -17,6 +20,7 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      name: firebase.auth().currentUser.email,
       message: 'Welcome to Your Vue.js App'
     }
   },
@@ -28,6 +32,11 @@ export default {
     async callPrivate () {
       const res = await axios.get(PRIVATE_API_URL)
       this.message = res.data
+    },
+    async signout () {
+      await firebase.auth().signOut()
+      localStorage.removeItem('jwt')
+      this.$router.push('/signin')
     }
   }
 }
